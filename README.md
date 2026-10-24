@@ -33,21 +33,6 @@ py -3.13 -m venv .venv
 
 No Linux/macOS, use `python3.13 -m venv .venv` e `.venv/bin/python` no lugar de `.\.venv\Scripts\python.exe`. O visitante do site não precisa instalar Python, Node.js ou bibliotecas.
 
-## Publicar no GitHub Pages
-
-1. Envie o código para a branch `main` do repositório.
-2. Em **Settings → Pages → Source**, escolha **GitHub Actions**.
-3. Em **Actions**, acompanhe **Testar e publicar no GitHub Pages**. Use **Run workflow** se precisar executar novamente.
-4. Depois de testar a URL padrão, cadastre o domínio em **Custom domain**, ajuste o DNS e ative **Enforce HTTPS**.
-
-O workflow `.github/workflows/pages.yml` verifica Python e JavaScript, constrói o site e publica o conteúdo de `site/`. A pasta é gerada e ignorada pelo Git. Pull requests são testados, mas não publicados.
-
-**Não selecione `/docs` como fonte:** essa pasta contém os guias. A publicação usa o artefato do GitHub Actions.
-
-O workflow obtém o caminho público pelo GitHub Pages e o aplica à página 404, para que estilos e navegação funcionem mesmo em URLs inexistentes aninhadas.
-
-Veja **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** para os passos completos, incluindo get.tech/Orderbox e domínio próprio. A publicação remota e as alterações de DNS precisam ser executadas na sua conta.
-
 ## Funcionamento e persistência
 
 - Tabuleiro 3 × 3 com rolos circulares A, B, C, D e E; prêmio apenas na linha central.
@@ -145,11 +130,3 @@ tests/                          testes Python e JavaScript
 docs/DEPLOYMENT.md               publicação e DNS get.tech
 LICENSES/                       atribuição do gerador
 ```
-
-## Autoria e transparência
-
-**Integrantes:** preencher os nomes do grupo antes da entrega.
-
-**Uso de IA:** modelo, experimentos, interface, adaptação estática, configuração de publicação, documentação e testes elaborados com apoio do Codex. As regras foram extraídas das seções 5–7 de `Trabalho1_Probabilidade.pdf`. O grupo deve compreender e revisar código, contas e interpretações. Não há declaração de revisão humana já realizada pelo grupo.
-
-O relatório acadêmico, a pesquisa documental e a identificação dos integrantes devem ser preparados pelo grupo.

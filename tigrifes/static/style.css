@@ -8,3 +8,5 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
 
 .storage-note{padding:12px 24px;border-top:1px solid var(--line)}.static-results-note{font-size:12px;color:var(--muted);line-height:1.8;margin:15px 0 0}
+
+.symbol,.payout-symbols,.history-symbols{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;font-weight:400}.payout-symbols{font-size:18px;letter-spacing:.03em}.history-symbols{font-size:19px;white-space:nowrap}

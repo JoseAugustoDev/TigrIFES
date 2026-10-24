@@ -4,6 +4,7 @@
   const spinButton = $("spin-button");
   const message = $("result-message");
   const board = $("board");
+  const symbols = JSON.parse(board.getAttribute("data-symbols"));
   const dialog = $("reset-dialog");
   const number = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
   // Cada instalação em github.io tem seu próprio espaço de armazenamento.
@@ -17,6 +18,8 @@
   let pendingSync = false;
 
   function signed(value) { return `${value > 0 ? "+" : ""}${number.format(value)}`; }
+  function emojiLine(line) { return line.map((symbol) => symbols[symbol].emoji).join(" · "); }
+  function namedLine(line) { return line.map((symbol) => symbols[symbol].name).join(", "); }
 
   function setBusy(value) {
     busy = value;
@@ -45,11 +48,11 @@
     const values = state.last?.board || [["A", "C", "E"], ["B", "D", "A"], ["C", "E", "B"]];
     board.querySelectorAll(".symbol").forEach((cell, i) => {
       const symbol = values[Math.floor(i / 3)][i % 3];
-      cell.textContent = symbol;
+      cell.textContent = symbols[symbol].emoji;
       cell.className = `symbol symbol-${symbol}`;
     });
     board.setAttribute("aria-label", state.last
-      ? `Rodada ${state.rounds}. Topo: ${values[0].join(", ")}. Linha central válida: ${values[1].join(", ")}. Base: ${values[2].join(", ")}.`
+      ? `Rodada ${state.rounds}. Topo: ${namedLine(values[0])}. Linha central válida: ${namedLine(values[1])}. Base: ${namedLine(values[2])}.`
       : "Tabuleiro ilustrativo, ainda sem sorteio. Apenas a linha central gera prêmio.");
     const history = $("history-body");
     history.replaceChildren();
@@ -64,9 +67,13 @@
     }
     state.history.forEach((round) => {
       const tr = document.createElement("tr");
-      [String(round.number).padStart(2, "0"), round.center.join(" · "), `${round.prize} cr.`, `${signed(round.profit)} cr.`, `${round.balance} cr.`].forEach((value, i) => {
+      [String(round.number).padStart(2, "0"), emojiLine(round.center), `${round.prize} cr.`, `${signed(round.profit)} cr.`, `${round.balance} cr.`].forEach((value, i) => {
         const cell = document.createElement(i === 0 ? "th" : "td");
         if (i === 0) cell.scope = "row";
+        if (i === 1) {
+          cell.className = "history-symbols";
+          cell.setAttribute("aria-label", namedLine(round.center));
+        }
         if (i === 3) cell.className = `history-profit ${round.profit > 0 ? "positive" : "negative"}`;
         cell.textContent = value;
         tr.append(cell);
@@ -89,7 +96,7 @@
         ? "Sessão encerrada: os créditos se esgotaram. Você pode iniciar outra sessão."
         : "500 rodadas concluídas. Explore o histórico ou inicie uma nova sessão.";
     } else if (state.last) {
-      message.textContent = `Rodada ${state.rounds}: ${state.last.center.join("–")}. Prêmio ${state.last.prize} cr. · Lucro ${signed(state.last.profit)} cr.${announce ? ` Saldo: ${state.balance}.` : ""}`;
+      message.textContent = `Rodada ${state.rounds}: ${emojiLine(state.last.center)}. Prêmio ${state.last.prize} cr. · Lucro ${signed(state.last.profit)} cr.${announce ? ` Saldo: ${state.balance}.` : ""}`;
     } else {
       message.textContent = "Tudo pronto. Cada rodada é um novo sorteio.";
     }

@@ -17,6 +17,7 @@ class Element {
     this.textContent = "";
   }
   setAttribute(name, value) { this.attributes[name] = value; }
+  getAttribute(name) { return this.attributes[name]; }
   append(child) { this.children.push(child); }
   replaceChildren() { this.children = []; }
   addEventListener(name, callback) { this.listeners[name] = callback; }
@@ -37,7 +38,12 @@ function interfaceSession(disk = storage(), pathname = "/TigrIFES/") {
     if (!nodes.has(id)) nodes.set(id, new Element());
     return nodes.get(id);
   };
-  byId("board").querySelectorAll = () => Array.from({ length: 9 }, () => new Element());
+  const symbols = Array.from({ length: 9 }, () => new Element());
+  byId("board").querySelectorAll = () => symbols;
+  byId("board").setAttribute("data-symbols", JSON.stringify({
+    A: { emoji: "🍒", name: "cereja" }, B: { emoji: "🍋", name: "limão" },
+    C: { emoji: "🍇", name: "uva" }, D: { emoji: "🍉", name: "melancia" }, E: { emoji: "🐯", name: "tigre" },
+  }));
   byId("balance-chart").querySelector = () => new Element();
   const listeners = {};
   const context = vm.createContext({

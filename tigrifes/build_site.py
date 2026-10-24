@@ -15,6 +15,13 @@ from .machine import PAYOUTS
 
 ROOT = Path(__file__).resolve().parent
 PROJECT = ROOT.parent
+SYMBOL_DISPLAY = {
+    "A": {"emoji": "🍒", "name": "cereja"},
+    "B": {"emoji": "🍋", "name": "limão"},
+    "C": {"emoji": "🍇", "name": "uva"},
+    "D": {"emoji": "🍉", "name": "melancia"},
+    "E": {"emoji": "🐯", "name": "tigre"},
+}
 
 
 def static_url(endpoint, **values):
@@ -61,7 +68,7 @@ def build_site(output: Path, base_path="/"):
     env = Environment(loader=FileSystemLoader(ROOT / "templates"),
                       autoescape=select_autoescape(["html"]), undefined=StrictUndefined)
     env.filters["number"] = number
-    env.globals.update(site_url=static_url)
+    env.globals.update(site_url=static_url, symbol_display=SYMBOL_DISPLAY)
     game = {"rounds": 0, "balance": 100, "seed": 2026, "wins": 0, "last": None}
     pages = {
         "index.html": ("index.html", {"game": game, "payouts": PAYOUTS, "active": "simulator"}),
