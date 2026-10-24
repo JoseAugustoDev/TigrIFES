@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div><p class="eyebrow"><span class="status-dot"></span> APRENDA EXPERIMENTANDO</p><h1>A sorte passa.<br><em>A matemática fica.</em></h1><p class="hero-description">Explore os rolos, observe os resultados e descubra a diferença entre ganhar uma rodada e ter vantagem no jogo.</p></div>
+  <aside class="hero-note"><span class="note-icon" aria-hidden="true">∑</span><p>O que acontece<br><strong>por trás dos rolos?</strong></p><span>Regras abertas. Dados reproduzíveis.<br>Uma máquina para fazer perguntas.</span></aside>
+</section>
+<div class="academic-banner"><span class="info-icon" aria-hidden="true">i</span><p><strong>Simulador acadêmico - somente créditos fictícios.</strong> Uma experiência de aprendizado, sem valor monetário.</p><span class="badge">MODO ESTUDO</span></div>
+<section class="theory-strip" aria-label="Probabilidades teóricas do modelo">
+  <div><span>CHANCE DE PRÊMIO</span><strong>4<small>%</small></strong><p>5 trincas entre 125 resultados</p></div>
+  <div><span>RETORNO TEÓRICO · RTP</span><strong>84<small>%</small></strong><p>Prêmio médio de 0,84 por crédito</p></div>
+  <div><span>LUCRO ESPERADO / RODADA</span><strong class="negative">−0,16<small> cr.</small></strong><p>Uma média, não uma previsão individual</p></div>
+</section>
+<div class="play-layout">
+  <section class="card machine-card" aria-labelledby="machine-title">
+    <div class="card-heading"><div><p class="eyebrow">01 / EXPLORE O MODELO</p><h2 id="machine-title">A máquina estatística</h2></div><span class="badge light">3 ROLOS · 5 SÍMBOLOS</span></div>
+    <div class="machine-body">
+      <div class="machine-top"><span><span class="status-dot"></span> APENAS A LINHA CENTRAL PAGA</span><span id="round-label">RODADA {{ game.rounds }} / 500</span></div>
+      <div class="reel-labels" aria-hidden="true"><span>ROLO 01</span><span>ROLO 02</span><span>ROLO 03</span></div>
+      <div class="board-wrap">
+        <span class="payline-marker" aria-hidden="true">▶</span>
+        <div class="board" id="board" role="img" aria-label="Tabuleiro ilustrativo. Inicie uma rodada para sortear os símbolos.">
+          {% set board = game.last.board if game.last else [['A','C','E'],['B','D','A'],['C','E','B']] %}
+          {% for row in board %}{% for symbol in row %}<div class="reel-cell"><span class="symbol symbol-{{ symbol }}">{{ symbol }}</span></div>{% endfor %}{% endfor %}
+        </div>
+        <span class="payline-marker" aria-hidden="true">◀</span>
+      </div>
+      <div class="result-message" id="result-message" role="status" aria-live="polite">Tudo pronto. Cada rodada é um novo sorteio.</div>
+      <div class="play-controls"><div class="bet-label"><span>CUSTO POR RODADA</span><strong>1 <small>crédito fictício</small></strong></div><button id="spin-button" class="button button-primary" type="button" disabled><span aria-hidden="true">↻</span> Girar os rolos <span aria-hidden="true">→</span></button></div>
+      <p class="machine-footnote">Três símbolos iguais no centro = prêmio. O lucro é o prêmio menos 1 crédito.</p>
+    </div>
+    <div class="session-settings"><span>Semente <strong id="seed-label">{{ game.seed }}</strong> · sequência reproduzível</span><button class="text-button" id="open-reset" type="button" disabled>Nova sessão <span aria-hidden="true">↗</span></button></div>
+    <p id="session-storage-note" class="microcopy storage-note" role="status">Saldo e histórico salvos somente neste navegador.</p>
+    <noscript><p class="notice">Ative o JavaScript para jogar. Os experimentos e downloads funcionam sem JavaScript.</p></noscript>
+  </section>
+  <aside class="session-sidebar">
+    <section class="card balance-card" aria-labelledby="balance-title"><div class="card-heading compact"><h2 id="balance-title">Sua sessão</h2><span class="badge light">VIRTUAL</span></div><p class="balance-label">SALDO ATUAL</p><p class="balance"><span id="balance">{{ game.balance }}</span><span>créditos</span></p><div class="balance-meta"><span>Saldo inicial <b>100</b></span><span>Resultado <b id="session-profit">{{ game.balance - 100 }}</b></span></div><svg id="balance-chart" class="balance-chart" viewBox="0 0 320 76" role="img" aria-label="Evolução do saldo da sessão"><path class="chart-baseline" d="M0 38H320"/><polyline id="balance-line" points="0,38 320,38"/></svg><div class="session-metrics"><div><strong id="round-count">{{ game.rounds }}</strong><span>Rodadas</span></div><div><strong id="win-count">{{ game.wins }}</strong><span>Com prêmio</span></div><div><strong id="observed-rtp">—</strong><span>RTP observado</span></div></div><p class="microcopy">A sessão termina em 500 rodadas ou ao esgotar o saldo. O RTP varia entre sessões.</p></section>
+    <section class="card payout-card" aria-labelledby="payout-title"><div class="card-heading compact"><h2 id="payout-title">Tabela de prêmios</h2><span class="muted">créditos</span></div><table><caption class="sr-only">Pagamento bruto para cada trinca central; cada uma tem probabilidade de 0,8%.</caption><thead><tr><th scope="col">Linha central</th><th scope="col">Chance</th><th scope="col">Prêmio</th></tr></thead><tbody>{% for symbol, prize in payouts.items() %}<tr><th scope="row"><span class="mini-symbol symbol-{{ symbol }}">{{ symbol }}</span> {{ symbol }} {{ symbol }} {{ symbol }}</th><td>0,8%</td><td><strong>{{ prize }}</strong></td></tr>{% endfor %}<tr class="no-prize-row"><th scope="row">Outras triplas</th><td>96%</td><td>0</td></tr></tbody></table></section>
+  </aside>
+</div>
+<section class="card history-card" aria-labelledby="history-title"><div class="card-heading"><div><p class="eyebrow">02 / OBSERVE OS DADOS</p><h2 id="history-title">Histórico da sessão</h2></div><span class="muted">Últimas 12 rodadas</span></div><div class="table-scroll"><table><thead><tr><th scope="col">Rodada</th><th scope="col">Linha central</th><th scope="col">Prêmio bruto</th><th scope="col">Lucro líquido</th><th scope="col">Saldo</th></tr></thead><tbody id="history-body"><tr><td colspan="5" class="empty-state">Seus resultados aparecem aqui depois do primeiro giro.</td></tr></tbody></table></div></section>
+<section class="learning-row"><div class="learning-copy"><p class="eyebrow">03 / VÁ ALÉM DE UMA RODADA</p><h2>Um resultado conta pouco.<br>Dez mil contam uma história.</h2><p>Compare frequências, acompanhe médias e investigue o que acontece com 100 participantes virtuais nos cinco experimentos do trabalho.</p><a class="button button-outline" href="{{ site_url('experiments') }}">Explorar os experimentos <span aria-hidden="true">↗</span></a></div><div class="concept-note"><span class="large-number">84% <span>≠</span> 4%</span><h3>Retorno não é chance de prêmio.</h3><p>O RTP relaciona os prêmios ao volume apostado, inclusive créditos reapostados. Ele não promete devolver 84% do saldo de uma pessoa. A chance de prêmio em cada rodada continua sendo 4%.</p></div></section>
+<dialog id="reset-dialog"><form id="reset-form"><p class="eyebrow">RECOMEÇAR O EXPERIMENTO</p><h2>Uma nova sessão</h2><p>O saldo volta a 100 créditos e o histórico da sessão é apagado. A mesma semente reproduz a mesma sequência.</p><label for="seed-input">Semente do gerador</label><input id="seed-input" name="seed" type="number" min="0" max="4294967295" step="1" value="2026" required><p class="microcopy">Use um inteiro entre 0 e 4.294.967.295.</p><p id="reset-error" class="negative" role="alert"></p><div class="dialog-actions"><button type="button" class="button button-outline" id="close-reset">Cancelar</button><button type="submit" class="button button-primary" id="reset-submit">Iniciar sessão</button></div></form></dialog>
+{% endblock %}
+{% block scripts %}
+<script src="{{ site_url('static', filename='machine.js') }}" defer></script>
+<script src="{{ site_url('static', filename='session-store.js') }}" defer></script>
+<script src="{{ site_url('static', filename='app-static.js') }}" defer></script>
+{% endblock %}

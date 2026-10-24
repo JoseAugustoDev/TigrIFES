@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Laboratório de probabilidade: explore uma máquina de rolos didática e compare a matemática com cinco experimentos reproduzíveis. Somente créditos fictícios.">
+  <meta name="theme-color" content="#174d3c">
+  <title>{% block title %}TigrIFES · Laboratório de probabilidade{% endblock %}</title>
+  <link rel="icon" href="{{ site_url('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ site_url('static', filename='style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Ir para o conteúdo</a>
+  <header class="site-header">
+    <div class="container header-content">
+      <a class="brand" href="{{ site_url('index') }}" aria-label="TigrIFES, início"><span class="brand-icon" aria-hidden="true">t<span>↗</span></span><span>Tigr<span class="brand-accent">IFES</span><small>LABORATÓRIO DE PROBABILIDADE</small></span></a>
+      <nav aria-label="Navegação principal">
+        <a href="{{ site_url('index') }}" {% if active == 'simulator' %}aria-current="page"{% endif %}>Simulador</a>
+        <a href="{{ site_url('experiments') }}" {% if active == 'experiments' %}aria-current="page"{% endif %}>Experimentos <span aria-hidden="true">↗</span></a>
+      </nav>
+      <span class="course-tag">PROBABILIDADE & ESTATÍSTICA I</span>
+    </div>
+  </header>
+  <main id="main" class="container">{% block content %}{% endblock %}</main>
+  <footer class="site-footer container">
+    <div><strong>TigrIFES</strong><span>Um experimento. Muitas perguntas.</span></div>
+    <p>Projeto acadêmico · IFES, Campus Serra · 2026<br>Simulador acadêmico - somente créditos fictícios<br><a href="{{ site_url('license') }}">Créditos do gerador</a></p>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
