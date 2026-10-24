@@ -1,0 +1,69 @@
+name: Testar e publicar no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependências de construção e testes
+        run: pip install -c constraints.txt -r requirements-dev.txt
+      - name: Conferir Python e compatibilidade do gerador JavaScript
+        run: python -m pytest -q
+      - name: Conferir sessões e interação do site estático
+        run: node --test tests/js/*.test.cjs
+      - name: Obter caminho público do GitHub Pages
+        id: pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v5
+      - name: Gerar páginas, gráficos e downloads
+        env:
+          SITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: python -m tigrifes.build_site --output site --base-path "$SITE_BASE_PATH"
+      - name: Guardar site para conferência
+        uses: actions/upload-artifact@v4
+        with:
+          name: tigrifes-site-estatico
+          path: site/
+      - name: Preparar artefato do Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar site
+        id: deployment
+        uses: actions/deploy-pages@v4
